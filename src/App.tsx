@@ -4,9 +4,9 @@ import IconTimer from '~icons/carbon/timer';
 
 import {
   GameContext,
-  MINES_EASY_GEME,
-  MINES_MEDIUM_GEME,
-  MINES_HARD_GEME,
+  MINES_EASY_GAME,
+  MINES_MEDIUM_GAME,
+  MINES_HARD_GAME,
 } from './context';
 import { Difficulty } from './types';
 import Button from './components/Button';
@@ -14,13 +14,13 @@ import MineBlock from './components/MineBlock';
 
 function App() {
   const { state, dispatch } = useContext(GameContext);
-  const { board } = state;
+  const { board, startMs } = state;
 
   function handleGameMode(difficulty: Difficulty) {
     const noOfMines = {
-      easy: MINES_EASY_GEME,
-      medium: MINES_MEDIUM_GEME,
-      hard: MINES_HARD_GEME,
+      easy: MINES_EASY_GAME,
+      medium: MINES_MEDIUM_GAME,
+      hard: MINES_HARD_GAME,
     };
     dispatch({
       type: 'new game',
@@ -39,7 +39,7 @@ function App() {
       </div>
       <div className="flex gap-10 justify-center">
         <div className="flex text-2xl gap-1 items-center font-mono">
-          <IconTimer />0
+          <IconTimer /> {startMs}
         </div>
         <div className="flex text-2xl gap-1 items-center font-mono">
           <IconMine />0
