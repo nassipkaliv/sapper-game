@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import IconMine from '~icons/mdi/mine';
 import IconTimer from '~icons/carbon/timer';
 
@@ -13,10 +13,14 @@ import Button from './components/Button';
 import MineBlock from './components/MineBlock';
 
 function App() {
+  const [timer, setTimer] = useState(0);
+  const interval = useRef(0);
   const { state, dispatch } = useContext(GameContext);
-  const { board, startMs } = state;
+  const { board } = state;
 
   function handleGameMode(difficulty: Difficulty) {
+    setTimer(0);
+    clearInterval(interval.current);
     const noOfMines = {
       easy: MINES_EASY_GAME,
       medium: MINES_MEDIUM_GAME,
@@ -28,9 +32,23 @@ function App() {
     });
   }
 
+  const minesLeft = board
+  .flat()
+  .reduce((a, b) => a - (b.flaged ? 1 : 0), state.mines);
+
+  useEffect(() => {
+    if(state.status === 'play') {
+      interval.current = setInterval(() => {
+        setTimer((val) => val + 1);
+      }, 1000);
+      return;
+    }
+    if(state.status === 'won' || state.status === 'lost')
+      clearInterval(interval.current);
+  }, [state.status]);
   return (
     <div>
-      Minesweeper
+      Sapper Game
       <div className="flex justify-center p-4 gap-1">
         <Button onClick={() => handleGameMode('easy')}>New Game</Button>
         <Button onClick={() => handleGameMode('easy')}>Easy</Button>
@@ -39,10 +57,11 @@ function App() {
       </div>
       <div className="flex gap-10 justify-center">
         <div className="flex text-2xl gap-1 items-center font-mono">
-          <IconTimer /> {startMs}
+          <IconTimer /> { timer }
         </div>
         <div className="flex text-2xl gap-1 items-center font-mono">
-          <IconMine />0
+          <IconMine />
+          {minesLeft}
         </div>
       </div>
       <div className="overflow-auto p-5 w-full">

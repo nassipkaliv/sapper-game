@@ -54,7 +54,7 @@ export default function MineBlock({ block }: MineBlockProps) {
         (function () {
           if (block.mine) return <IconMine color="#fff" />;
           if (block.adjacentMines > 0)
-            return <span>{block.adjacentMines}</span>;
+            return <span className='font-semibold'>{block.adjacentMines}</span>;
         })()}
     </button>
   );
