@@ -172,6 +172,8 @@ function gameStateReducer(state: GameState, action: Actions): GameState {
       const { mines, difficulty } = action.payload;
       return {
         ...state,
+        mineGenerated: false,
+        status: 'ready',
         mines,
         board: newGame(difficulty),
       };

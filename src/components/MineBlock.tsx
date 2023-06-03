@@ -32,7 +32,8 @@ export default function MineBlock({ block }: MineBlockProps) {
 
   const getBlockClass = () => {
     if (block.flaged) return 'bg-gray-500 bg-opacity-10';
-    if (!block.revealed) return 'bg-gray-500 bg-opacity-10 hover:bg-gray-400 hover:bg-opacity-20';
+    if (!block.revealed)
+      return 'bg-gray-500 bg-opacity-10 hover:bg-gray-500 hover:bg-opacity-20';
 
     return block.mine ? 'bg-red-500' : numberColors[block.adjacentMines];
   };
@@ -43,19 +44,20 @@ export default function MineBlock({ block }: MineBlockProps) {
       onClick={() => {
         dispatch({ type: 'play', payload: block });
       }}
-      className={`flex items-center justify-center m-1px min-w-8 min-h-8 border-0.5 border-gray-400  border-opacity-10 ${getBlockClass()}`}
+      className={`flex items-center justify-center m-1px min-w-8 min-h-8 border-0.5 border-gray-400 border-opacity-10 ${getBlockClass()}`}
     >
-      {block.flaged && (
+      {block.flaged ? (
         <span className="text-red-400">
           <IconFlag />
         </span>
-      )}
-      {block.revealed &&
+      ) : (
+        block.revealed &&
         (function () {
           if (block.mine) return <IconMine color="#fff" />;
           if (block.adjacentMines > 0)
-            return <span className='font-semibold'>{block.adjacentMines}</span>;
-        })()}
+            return <span className="font-semibold">{block.adjacentMines}</span>;
+        })()
+      )}
     </button>
   );
 }
