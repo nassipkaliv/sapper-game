@@ -12,6 +12,7 @@ import { Difficulty } from './types';
 import Button from './components/Button';
 import MineBlock from './components/MineBlock';
 
+
 function App() {
   const [timer, setTimer] = useState(0);
   const interval = useRef(0);
@@ -33,31 +34,44 @@ function App() {
   }
 
   const minesLeft = board
-  .flat()
-  .reduce((a, b) => a - (b.flaged ? 1 : 0), state.mines);
+    .flat()
+    .reduce((a, b) => a - (b.flaged ? 1 : 0), state.mines);
 
   useEffect(() => {
-    if(state.status === 'play') {
+    if (state.status === 'play') {
       interval.current = setInterval(() => {
         setTimer((val) => val + 1);
       }, 1000);
       return;
     }
-    if(state.status === 'won' || state.status === 'lost')
-      clearInterval(interval.current);
+    clearInterval(interval.current);
   }, [state.status]);
+
+  useEffect(() => {
+    if (state.status === 'lost')
+      setTimeout(() => {
+        alert('lost');
+      }, 10);
+  }, [state.status]);
+
+  useEffect(() => {
+    let blocks = board.flat();
+    if (!blocks.some((block) => !block.mine && !block.revealed))
+      dispatch({ type: 'gameover', payload: 'won' });
+  }, [board]);
+
   return (
-    <div>
-      Sapper Game
+    <div className="text-center">
+      <span className="dark:text-white"> Minesweeper </span>
       <div className="flex justify-center p-4 gap-1">
         <Button onClick={() => handleGameMode('easy')}>New Game</Button>
         <Button onClick={() => handleGameMode('easy')}>Easy</Button>
         <Button onClick={() => handleGameMode('medium')}>Medium</Button>
         <Button onClick={() => handleGameMode('hard')}>Hard</Button>
       </div>
-      <div className="flex gap-10 justify-center">
+      <div className="flex gap-10 justify-center dark:text-white">
         <div className="flex text-2xl gap-1 items-center font-mono">
-          <IconTimer /> { timer }
+          <IconTimer /> {timer}
         </div>
         <div className="flex text-2xl gap-1 items-center font-mono">
           <IconMine />
@@ -76,6 +90,7 @@ function App() {
           </div>
         ))}
       </div>
+     
     </div>
   );
 }

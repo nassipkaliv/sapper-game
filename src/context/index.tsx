@@ -38,7 +38,8 @@ type Actions =
       payload: { difficulty: Difficulty; mines: number };
     }
   | { type: 'play'; payload: BlockState }
-  | { type: 'flaged'; payload: BlockState };
+  | { type: 'flaged'; payload: BlockState }
+  | { type: 'gameover'; payload: GameStatus };
 
 function reset(width: number, height: number): BlockState[][] {
   return Array(height)
@@ -139,18 +140,6 @@ function expendZero(board: BlockState[][], block: BlockState) {
   });
 }
 
-function gameOver(gameState: GameState, status: GameStatus) {
-  gameState.status = status;
-  gameState.endMs = +Date.now();
-
-  if (status === 'lost') {
-    showAllMine(gameState);
-    setTimeout(() => {
-      alert('lost');
-    }, 10);
-  }
-}
-
 function showAllMine(gameState: GameState) {
   gameState.board.flat().forEach((block) => {
     if (block.mine) block.revealed = true;
@@ -197,7 +186,8 @@ function gameStateReducer(state: GameState, action: Actions): GameState {
       block.revealed = true;
       newState.board[y][x] = block;
       if (block.mine) {
-        gameOver(newState, 'lost');
+        showAllMine(newState);
+        newState.status = 'lost';
         return newState;
       }
       expendZero(newState.board, block);
@@ -209,6 +199,12 @@ function gameStateReducer(state: GameState, action: Actions): GameState {
       const newState = JSON.parse(JSON.stringify(state)) as GameState;
       newState.board[y][x].flaged = !newState.board[y][x].flaged;
       return newState;
+    }
+    case 'gameover': {
+      return {
+        ...state,
+        status: action.payload,
+      };
     }
     default:
       return state;
