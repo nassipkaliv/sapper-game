@@ -2,7 +2,12 @@ import { useContext } from 'react';
 import IconMine from '~icons/mdi/mine';
 import IconTimer from '~icons/carbon/timer';
 
-import { GameContext } from './context';
+import {
+  GameContext,
+  MINES_EASY_GEME,
+  MINES_MEDIUM_GEME,
+  MINES_HARD_GEME,
+} from './context';
 import { Difficulty } from './types';
 import Button from './components/Button';
 import MineBlock from './components/MineBlock';
@@ -12,12 +17,20 @@ function App() {
   const { board } = state;
 
   function handleGameMode(difficulty: Difficulty) {
-    dispatch({ type: 'new game', payload: difficulty });
+    const noOfMines = {
+      easy: MINES_EASY_GEME,
+      medium: MINES_MEDIUM_GEME,
+      hard: MINES_HARD_GEME,
+    };
+    dispatch({
+      type: 'new game',
+      payload: { difficulty, mines: noOfMines[difficulty] },
+    });
   }
 
   return (
     <div>
-      Sapper Game
+      Minesweeper
       <div className="flex justify-center p-4 gap-1">
         <Button onClick={() => handleGameMode('easy')}>New Game</Button>
         <Button onClick={() => handleGameMode('easy')}>Easy</Button>

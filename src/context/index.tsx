@@ -1,9 +1,14 @@
 import { createContext, PropsWithChildren, useReducer } from 'react';
 import { BlockState, Difficulty } from '../types';
 
+export const MINES_EASY_GEME = 10;
+export const MINES_MEDIUM_GEME = 40;
+export const MINES_HARD_GEME = 99;
+
 type GameStatus = 'ready' | 'play' | 'won' | 'lost';
 
 type GameState = {
+  mines: number;
   board: BlockState[][];
   mineGenerated: boolean;
   status: GameStatus;
@@ -16,7 +21,7 @@ type GameContext = {
   dispatch: React.Dispatch<Actions>;
 };
 
-function reset(width: number, height: number, mine: number): BlockState[][] {
+function reset(width: number, height: number): BlockState[][] {
   return Array(height)
     .fill(0)
     .map((_, idx) => idx)
@@ -38,32 +43,36 @@ function reset(width: number, height: number, mine: number): BlockState[][] {
 function newGame(difficulty: Difficulty): BlockState[][] {
   switch (difficulty) {
     case 'medium': {
-      return reset(16, 16, 40);
-      break;
+      return reset(16, 16);
     }
     case 'hard': {
-      return reset(16, 30, 99);
-      break;
+      return reset(16, 30);
     }
     default:
-      return reset(9, 9, 10);
+      return reset(9, 9);
   }
 }
 
 const gameState: GameState = {
+  mines: 10,
   board: newGame('easy'),
   mineGenerated: false,
   status: 'play',
 };
 
-type Actions = { type: 'new game'; payload: Difficulty };
+type Actions = {
+  type: 'new game';
+  payload: { difficulty: Difficulty; mines: number };
+};
 
 function gameStateReducer(state: GameState, action: Actions) {
   switch (action.type) {
     case 'new game': {
+      const { mines, difficulty } = action.payload;
       return {
         ...state,
-        board: newGame(action.payload),
+        mines,
+        board: newGame(difficulty),
       };
     }
   }
