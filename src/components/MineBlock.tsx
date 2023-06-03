@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, MouseEventHandler } from 'react';
 import IconMine from '~icons/mdi/mine';
 import IconFlag from '~icons/mdi/flag';
 
@@ -10,9 +10,17 @@ type MineBlockProps = {
 };
 
 export default function MineBlock({ block }: MineBlockProps) {
-  const { dispatch } = useContext(GameContext);
+  const { dispatch, state } = useContext(GameContext);
+  
+  const handleRightClick: MouseEventHandler = (e) => {
+    e.preventDefault();
+    if(state.status !== 'play' || block.revealed) return;
+    dispatch({ type: 'flaged', payload: block});
+  };
+
   return (
     <button
+      onContextMenu={handleRightClick}
       onClick={() => {
         dispatch({ type: 'play', payload: block });
       }}
